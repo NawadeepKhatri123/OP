@@ -1,6 +1,10 @@
 #include <iostream>
 #include <cstdlib>
 
+void print_primes(int start, int end);
+bool is_prime(int num);
+
+
 int main(int argc , char *argv[]){
     int start = atoi (argv[1]);
     int end = atoi (argv[2]);
@@ -11,11 +15,11 @@ int main(int argc , char *argv[]){
 
 
 void print_primes(int start, int end){
-    std::cout << "the primes between " start << "and " << end <<" is : ";
+    std::cout << "the primes between " << start << " and " << end <<" is : ";
 
     for (int i = start; i <= end ; i++ ){
-        if ( is_prime(start)){
-            std::cout << start ;
+        if ( is_prime(i)){
+            std::cout << i << " ";
         }
     } 
     std::cout << '\n';
