@@ -1,39 +1,27 @@
-#include<iostream>
+#include<iostream>  //i/o
 #include<unistd.h>
+#include <stdlib.h> // atoi  
 
-// this program you enter the commmand line arguments where ./boss 4 (is the amount of process you have to make 
-// and ) 300 is the number you have to find the primes till 
 
-int main(int argc, char *argv[]){
-    for(int i = 0; i < argc; i++){
-        std::cout << "argument" << i << ": " << argv[i] <<std ::endl;
+int main( int argc, char *argv[]){
+    int worker = atoi(argv[1]);         // convert 1 arg into int
+    int limi = atoi(argv[2]);           // convert 2 arg into int
+    int range = limi / worker;          // calculate the range each worker has to work
+    int start, end;
+    for (int i = 0  ; i < worker ; i++){
+        start = i * range + 1;          // get the starting range for each worker
+        if ( (worker - i) == 1){        // check if it is the final limit
+            end =  limi;                // if so then assign all the remainig values to the last worker
+        }else{
+            end = (range + start) -1;  // if not calculate the range of the worker 
+        }
+        pid_t pid = fork();             // creates a new process
+        std::string strstart = std::to_string(start);
+        std::string strend = std::to_string(end);
+        if (  pid == 0 ){               // ensure that the if statement can only be acccessed by the child 
+            execl("./worker","./worker", strstart.c_str(), strend.c_str(), (char *) nullptr );
+            exit(1);
+
+        }
     }
-    
-    pid_t pid = fork();  // creating the first child process
-
-    for(int i = 0; i < argc ; i++){         // for loop to create child processes
-        if (pid == 0){                      // check if pid is 0 if so it is a child process
-            execl(
-        }else if (pid > 0){                 // if pid > 0 then it is a parent process
-            pid = fork();
-
-        }else {                            // if it's something else then theres a error
-            perror ("fork failed");
-            exit (EXIT_FAILURE);
-        }        
-    }
-
-
-
-    return 0;
-
 }
-// in the boss program i should make  worker processes . the boss program will fork the worker processes the amount
-// given in the cmd line argument. use execl() system call to run the worker program. the boss should not do
-// anything besides creating processes and terminating. it is not involved in any calculations.
-//
-//  so basically execl() what it does is replaces the current image process with a new image process.
-//  i create new processes using fork() and only pass the child process to execl() which later than executes in 
-//  worker program. 
-//  syntax for execl(const char * path , const char * arg, ..... );
-//  okay so get the file location and 
