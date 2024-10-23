@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstdlib> // to use atoi ( str to int)
 
-void print_primes(int start , int end);
+void primes(int start , int end);
 bool calc_prime (int num);
 
 
@@ -11,12 +11,12 @@ int main(int argc , char *argv[]){
     int start = atoi (argv[1]);           // convert the first num to int which is the start of the range
     int end = atoi (argv[2])  ;          // convert the second num to int which is the end of the range
 
-    print_primes(start , end); // call print_primes function 
+    primes(start , end); // call print_primes function 
     return 0;                           // end the program
 }
 
 
-void print_primes (int start, int end){    // takes two arguments
+void primes (int start, int end){    // takes two arguments
     std ::cout << "primes from " << start << " to " << end <<" is : ";  // prints primes from ...........
     for (int i = start ; i <= end ; i++ ){                                   // loop to check for prime
         if ( calc_prime(i)){                                                 // send the num into te check prime function
