@@ -7,10 +7,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-void primes(int start, int end, char *str2);
+void primes(int start, int end);
 bool calc_prime (int num);
-void parse(int *str1);
-
+void parse(int val );
+char str1[80], str2[80];
 int main()
 {
 	int fd1;
@@ -22,7 +22,7 @@ int main()
         printf("error creating a pipe \n"); // 0666 sets permission to read and write for everyone
    } 
 
-    char str1[80], str2[80];
+
 	
     while (true)
 	{
@@ -30,30 +30,28 @@ int main()
 		fd1 = open(myfifo,O_RDONLY);
 	    ssize_t bytesRead =	read(fd1, str1, 80);
         int val = (int)bytesRead;                   //converts bytesread into int +2 for some reason
-        //memcpy(str2,str1,sizeof(str1));
-		// Print the read string and close
         
-        parse(str1,val);
+
+        parse(val);
 		//printf("%d", val);
 		close(fd1);
 
 		// Now open in write mode and write
 		// string taken from user.
-		//fd1 = open(myfifo,O_WRONLY);
-		//fgets(str2, 80, stdin);
-		//write(fd1, str2, strlen(str2)+1);
-		//close(fd1);
+		fd1 = open(myfifo,O_WRONLY);
+		write(fd1, str2, strlen(str2)+1);
+		close(fd1);
         break;
 	}
 	return 0;
 }
 
-void primes(int start, int end, int *arr2){
+void primes(int start, int end){
     int count = 0;
     printf("primes from %d to %d is ", start,end);
     for (int i = start ; i < end ; i++){
         if (calc_prime(i)){
-            arr2[count++] = i ;  
+            str2[count++] = i ;  
         }
     }
     
@@ -69,7 +67,7 @@ bool calc_prime(int num){
     return true;
 }
 
-void parse(char *str1, int val){
+void parse(int val){
     int space = 0;// used for spaces
     int start;    // last used location in str1 + 1
     int lwrbund;  // gets the lower bound
@@ -78,7 +76,7 @@ void parse(char *str1, int val){
         while (space == 0){     // convert char to int or str
             for (int i = 0; i < val; i++){
                 if(str1[i] == ' '){         // check for the first 
-                    count++;
+                    space++;
                     start = i + 1;
                     break;
                 }
@@ -86,13 +84,13 @@ void parse(char *str1, int val){
         }
         while(space == 1){      // get the lower_bound
             for (int i = start ; i < val ; i++){
-                if (str[i] == ' '){
-                    count++;
+                if (str1[i] == ' '){
+                    space++;
                     start = i + 1;
                     break;
                 }else {
                     if ( i > start){
-                        lwrbund = (lwr * 10) + (str1[i] - '0');
+                        lwrbund = (lwrbund * 10) + (str1[i] - '0');
                     }else{
                         lwrbund = str1[i] -'0';
                     }
@@ -101,18 +99,18 @@ void parse(char *str1, int val){
         }
         while (space == 3){
             for (int i = start; i < val; i++){
-                if (str[i] == ' '){
-                    count++;
+                if (str1[i] == ' '){
+                    space++;
                     break;                    
                 }else{
                     if ( i > start){
-                        uprbund = (upr * 10) + (str1[i] - '0');
+                        uprbund = (uprbund * 10) + (str1[i] - '0');
                     }else{
-                        uprbund = str[i] - '0';
+                        uprbund = str1[i] - '0';
                     }
                 }
             }
         }
-    
+    primes(lwrbund, uprbund);
     
 }
