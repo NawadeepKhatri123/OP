@@ -6,15 +6,15 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+//char str1[80], str2[80];
 
-void primes(int start, int end);
+void primes(int start, int end, char *str2);
 bool calc_prime (int num);
-void parse(int val );
-char str1[80], str2[80];
+void parse(int val, char *str1, char *str2 );
 int main()
 {
-	int fd1;
-
+	int fd1; 
+    char str1[80], str2[80];
 	// FIFO file path
 	const char * myfifo = "/tmp/myfifo";
     
@@ -29,16 +29,17 @@ int main()
 		// First open in read only and read
 		fd1 = open(myfifo,O_RDONLY);
 	    ssize_t bytesRead =	read(fd1, str1, 80);
-        int val = (int)bytesRead;                   //converts bytesread into int +2 for some reason
-        
+        close(fd1);
 
-        parse(val);
-		//printf("%d", val);
-		close(fd1);
 
+        int val = (int)bytesRead - 3;                   //converts bytesread into int +2 for some reason
+        parse(val, str1, str2);
+		printf(str1);
+		
 		// Now open in write mode and write
 		// string taken from user.
 		fd1 = open(myfifo,O_WRONLY);
+        fgets(str2, 80, stdin);
 		write(fd1, str2, strlen(str2)+1);
 		close(fd1);
         break;
@@ -46,12 +47,12 @@ int main()
 	return 0;
 }
 
-void primes(int start, int end){
+void primes(int start, int end, char *str2){
     int count = 0;
     printf("primes from %d to %d is ", start,end);
     for (int i = start ; i < end ; i++){
         if (calc_prime(i)){
-            str2[count++] = i ;  
+            str2[count++] = i + '0' ;  
         }
     }
     
@@ -67,12 +68,12 @@ bool calc_prime(int num){
     return true;
 }
 
-void parse(int val){
+void parse(int val, char *str1, char *str2){
     int space = 0;// used for spaces
     int start;    // last used location in str1 + 1
     int lwrbund;  // gets the lower bound
     int uprbund;  // gets the upper bound
-    val = val - 4; 
+    val = val - 3; 
         while (space == 0){     // convert char to int or str
             for (int i = 0; i < val; i++){
                 if(str1[i] == ' '){         // check for the first 
@@ -97,7 +98,7 @@ void parse(int val){
                 }
             }
         }
-        while (space == 3){
+        //while (space == 3){
             for (int i = start; i < val; i++){
                 if (str1[i] == ' '){
                     space++;
@@ -110,7 +111,7 @@ void parse(int val){
                     }
                 }
             }
-        }
-    primes(lwrbund, uprbund);
-    
+        //}
+    primes(lwrbund, uprbund, str2);
+ 
 }
