@@ -7,8 +7,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-void primes(int start, int end, int *arr2);
+void primes(int start, int end, char *str2);
 bool calc_prime (int num);
+void parse(int *str1);
 
 int main()
 {
@@ -31,9 +32,8 @@ int main()
         int val = (int)bytesRead;                   //converts bytesread into int +2 for some reason
         //memcpy(str2,str1,sizeof(str1));
 		// Print the read string and close
-        for (int i = 0; i < val-3; i++){
-            printf(" %c \n",str1[i]);
-        }
+        
+        parse(str1,val);
 		//printf("%d", val);
 		close(fd1);
 
@@ -67,4 +67,52 @@ bool calc_prime(int num){
         if (num % i == 0 ) return false;
     }
     return true;
+}
+
+void parse(char *str1, int val){
+    int space = 0;// used for spaces
+    int start;    // last used location in str1 + 1
+    int lwrbund;  // gets the lower bound
+    int uprbund;  // gets the upper bound
+    val = val - 4; 
+        while (space == 0){     // convert char to int or str
+            for (int i = 0; i < val; i++){
+                if(str1[i] == ' '){         // check for the first 
+                    count++;
+                    start = i + 1;
+                    break;
+                }
+            }  
+        }
+        while(space == 1){      // get the lower_bound
+            for (int i = start ; i < val ; i++){
+                if (str[i] == ' '){
+                    count++;
+                    start = i + 1;
+                    break;
+                }else {
+                    if ( i > start){
+                        lwrbund = (lwr * 10) + (str1[i] - '0');
+                    }else{
+                        lwrbund = str1[i] -'0';
+                    }
+                }
+            }
+        }
+        while (space == 3){
+            for (int i = start; i < val; i++){
+                if (str[i] == ' '){
+                    count++;
+                    break;                    
+                }else{
+                    if ( i > start){
+                        uprbund = (upr * 10) + (str1[i] - '0');
+                    }else{
+                        uprbund = str[i] - '0';
+                    }
+                }
+            }
+        }
+    
+    
 }
