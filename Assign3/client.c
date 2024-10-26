@@ -12,14 +12,16 @@ int main()
 	int fd;//file descriptor
 
 	// FIFO file path
-	char * myfifo = "/tmp/myfifo";// create a temp file for a named pipe
+    const char * myfifo = "/tmp/myfifo";// create a temp file for a named pipe
 
 	// Creating the named file(FIFO)
 	// mkfifo(<pathname>, <permission>)
 	//mkfifo(myfifo, 0666);owner has read // write execution on the file and the world
     //cllient doesnot have to make a pipe
-	char arr1[80], arr2[80];
-	while (1)
+	char arr1[80];
+    char arr2[80] = {'1','2','a','4','b','\0'};
+	
+    while (1)
 	{
 		// Open FIFO for write only
 		fd = open(myfifo, O_WRONLY);	//O_WRONLY write only

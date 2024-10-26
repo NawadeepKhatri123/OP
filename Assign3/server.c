@@ -12,19 +12,20 @@ int main()
 	int fd1;
 
 	// FIFO file path
-	char * myfifo = "/tmp/myfifo";
+	const char * myfifo = "/tmp/myfifo";
+    
+   if( (mkfifo (myfifo, 0666)) == -1){ // creates pipe under the location specified by myfifo
+        printf("error creating a pipe"); // 0666 sets permission to read and write for everyone
+   } 
 
-	// Creating the named file(FIFO)
-	// mkfifo(<pathname>,<permission>)
-	mkfifo(myfifo, 0666);
-
-	char str1[80], str2[80];
-	while (1)
+    char str1[80], str2[80];
+	
+    while (1)
 	{
 		// First open in read only and read
 		fd1 = open(myfifo,O_RDONLY);
 		read(fd1, str1, 80);
-
+        memcpy(str2,str1,sizeof(str1));
 		// Print the read string and close
 		printf("User1: %s\n", str1);
 		close(fd1);
