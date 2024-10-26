@@ -18,9 +18,7 @@ int main()
 	// mkfifo(<pathname>, <permission>)
 	//mkfifo(myfifo, 0666);owner has read // write execution on the file and the world
     //cllient doesnot have to make a pipe
-	char arr1[80];
-    char arr2[80] = {'1','2','a','4','b','\0'};
-	
+	char arr1[80], arr2[80];
     while (1)
 	{
 		// Open FIFO for write only
@@ -34,16 +32,22 @@ int main()
 		// and close it
 		write(fd, arr2, strlen(arr2)+1);		//Takes a file descriptor 
 		close(fd);
+        
 
 		// Open FIFO for Read only
 		fd = open(myfifo, O_RDONLY);
 
 		// Read from FIFO
 		read(fd, arr1, sizeof(arr1));
+        ssize_t bytesRead = read(fd, arr1, sizeof(arr1));
+        if (bytesRead > 0) {
+            printf("Received: %s", arr1);
+        }
 
 		// Print the read message
-		printf("User2: %s\n", arr1);
+		printf( arr1);
 		close(fd);
+        
 	}
 	return 0;
 }

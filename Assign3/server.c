@@ -32,17 +32,18 @@ int main()
         close(fd1);
 
 
-        int val = (int)bytesRead - 3;                   //converts bytesread into int +2 for some reason
-        parse(val, str1, str2);
-		printf(str1);
+        //int val = (int)bytesRead - 3;                   //converts bytesread into int +2 for some reason
+        //parse(val, str1, str2);
+	    printf(str1);
 		
 		// Now open in write mode and write
 		// string taken from user.
+        //const char *msg = " hello world\n";
 		fd1 = open(myfifo,O_WRONLY);
         fgets(str2, 80, stdin);
 		write(fd1, str2, strlen(str2)+1);
 		close(fd1);
-        break;
+        
 	}
 	return 0;
 }
