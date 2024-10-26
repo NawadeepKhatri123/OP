@@ -45,7 +45,9 @@ int main()
         }
 
 		// Print the read message
+        printf("prime numbers are = ");
 		printf( arr1);
+      
 		close(fd);
         
 	}
