@@ -22,24 +22,19 @@ int main()
     char str2[80]= {0};                 // initalize all emlements to 0 to avoid garbage values
    	                                    // FIFO file path
 	const char * myfifo = "/tmp/myfifo";
-    
-   if( (mkfifo (myfifo, 0666)) == -1){ // creates pipe under the location specified by myfifo
-        printf("error creating a pipe \n"); // 0666 sets permission to read and write for everyone
-   } 
-
-
-	
-    while (true)
-	{
+    while(true){ 
 		// First open in read only and read
 		fd1 = open(myfifo,O_RDONLY);
 	    ssize_t bytesRead =	read(fd1, str1, 80);
         close(fd1);
-
+        printf("User1:%s\n",str1);
 
         int val = (int)bytesRead - 3;                   //converts bytesread into int +2 for some reason
-        parse ( val,str1,str2); 
-	
+        if ( val < 8){
+            strcpy(str2, "malformed request");
+        }else {
+            parse ( val,str1,str2); 
+	    }
 		// Now open in write mode and write
 		// string taken from user.
       
@@ -48,17 +43,17 @@ int main()
 		write(fd1, str2, strlen(str2)+1);
 		close(fd1);
         memset(str2, 0, sizeof(str2));
-	}
+    }
 	return 0;
+    
 }
 
 void primes(int start, int end, char *str2){
     char buffer[80];
-
-
+ 
     for (int i = start ; i < end ; i++){
         if (calc_prime(i)){
-           
+          
             sprintf(buffer, "%d", i);
             strcat(str2, buffer);
             strcat(str2," ");
