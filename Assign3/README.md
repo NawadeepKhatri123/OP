@@ -29,8 +29,8 @@ Compilation
 To compile the programs, use the following commands in the terminal:
 
 
-    g++ -o server server.c
-    g++ -o client client.c
+    gcc -o server server.c
+    gcc -o client client.c
 
 Usage
 
