@@ -1,25 +1,22 @@
 FIFO Prime Number
 Overview
-
-    This project implements a two-sided FIFO (First In, First Out) communication system in C. One side reads input to find prime numbers in a specified range, while the other side writes the request for the range. 
+    This project implements a two-sided FIFO (First In, First Out) communication system in C. 
+    One side reads input to find prime numbers in a specified range, while the other side writes the request for the range. 
     The program uses named pipes (FIFOs) for inter-process communication.
 
 Components
 
 Server
-
     Reads a request from FIFO.
     Parses the input for a range of numbers.
     Calculates and returns prime numbers within that range.
 
 Client 
-
     Prompts the user for input (a range).
     Sends the input to the FIFO.
     Reads and displays the response from the reader.
 
 Files
-
     server.c: The code for the reader side which processes the prime number requests.
     client.c: The code for the writer side which handles user input and communicates with the reader.
 
