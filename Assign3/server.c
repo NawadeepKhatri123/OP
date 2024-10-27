@@ -8,7 +8,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <ctype.h>
-
+#include <stdbool.h>
 // Function declarations
 void primes(int start, int end, char *str2); // Finds prime numbers in a range
 bool calc_prime(int num);                     // Checks if a number is prime
