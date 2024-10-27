@@ -1,3 +1,4 @@
+
 // C program to implement one side of FIFO
 // This side reads first, then reads
 #include <stdio.h>
@@ -8,134 +9,137 @@
 #include <unistd.h>
 #include <ctype.h>
 
+// Function declarations
+void primes(int start, int end, char *str2); // Finds prime numbers in a range
+bool calc_prime(int num);                     // Checks if a number is prime
+void parse(int val, char *str1, char *str2); // Parses the input string for range
+void print1(char *str2);                      // Function not used in this code
 
-void primes(int start, int end, char *str2);
-bool calc_prime (int num);
-void parse(int val, char *str1, char *str2 );
-void print1(char *str2);
-
-
-int main()
-{
-	int fd1; 
+int main() {
+    int fd1; 
     char str1[80];                      
-    char str2[80]= {0};                 // initalize all emlements to 0 to avoid garbage values
-   	                                    // FIFO file path
-	const char * myfifo = "/tmp/myfifo";
-    while(true){ 
-		// First open in read only and read
-		fd1 = open(myfifo,O_RDONLY);
-	    ssize_t bytesRead =	read(fd1, str1, 80);
-        close(fd1);
-        printf("User1:%s\n",str1);
+    char str2[80] = {0}; // Initialize str2 to avoid garbage values
+    const char *myfifo = "/tmp/myfifo"; // FIFO file path
 
-        int val = (int)bytesRead - 3;                   //converts bytesread into int +2 for some reason
-        if ( val < 8){
-            strcpy(str2, "malformed request");
-        }else {
-            parse ( val,str1,str2); 
-	    }
-		// Now open in write mode and write
-		// string taken from user.
-      
-		fd1 = open(myfifo,O_WRONLY);
-    
-		write(fd1, str2, strlen(str2)+1);
-		close(fd1);
-        memset(str2, 0, sizeof(str2));
+    while (true) { 
+        // Open the FIFO in read-only mode and read data
+        fd1 = open(myfifo, O_RDONLY);
+        ssize_t bytesRead = read(fd1, str1, 80);
+        close(fd1); // Close the FIFO after reading
+
+        printf("User1: %s\n", str1); // Print the received message
+
+        int val = (int)bytesRead - 3; // Adjust bytes read for some reason
+        if (val < 8) {
+            strcpy(str2, "malformed request"); // Handle malformed requests
+        } else {
+            parse(val, str1, str2); // Parse the input string
+        }
+
+        // Open the FIFO in write mode and send the response
+        fd1 = open(myfifo, O_WRONLY);
+        write(fd1, str2, strlen(str2) + 1); // Write the response
+        close(fd1); // Close the FIFO after writing
+
+        memset(str2, 0, sizeof(str2)); // Clear str2 for the next response
     }
-	return 0;
-    
+    return 0;
 }
 
-void primes(int start, int end, char *str2){
-    char buffer[80];
+// Function to find prime numbers in a given range
+void primes(int start, int end, char *str2) {
+    char buffer[80]; // Buffer to store individual prime numbers
  
-    for (int i = start ; i < end ; i++){
-        if (calc_prime(i)){
-          
-            sprintf(buffer, "%d", i);
-            strcat(str2, buffer);
-            strcat(str2," ");
+    for (int i = start; i < end; i++) {
+        if (calc_prime(i)) { // Check if the number is prime
+            sprintf(buffer, "%d", i); // Convert the prime number to string
+            strcat(str2, buffer); // Append to str2
+            strcat(str2, " "); // Add space for readability
         }
     }
-
-    
-    
 }
 
-bool calc_prime(int num){
-    if (num <= 1) return false;
-    else if (num == 2) return true;
-    else if (num % 2 == 0) return false;
-    for (int i = 3; (i * i) <= num ; i+=2){
-        if (num % i == 0 ) return false;
+// Function to check if a number is prime
+bool calc_prime(int num) {
+    if (num <= 1) return false; // 0 and 1 are not prime
+    else if (num == 2) return true; // 2 is the only even prime
+    else if (num % 2 == 0) return false; // Other even numbers are not prime
+
+    // Check odd numbers only
+    for (int i = 3; (i * i) <= num; i += 2) {
+        if (num % i == 0) return false; // Found a divisor, not prime
     }
-    return true;
+    return true; // It's prime if no divisors were found
 }
 
-void parse (int val, char *str1, char *str2){
-        int space = 0;// used for spaces
-        int start = 0;    // last used location in str1 + 1
-        int lwrbund;  // gets the lower bound
-        int uprbund;  // gets the upper bound
-        char range[] = "range";
-  while (space == 0){     // convert char to int or str
-            for (int i = 0; i < val; i++){
-             
-                if(str1[i] == ' '){         // check for the first 
-                    space++;
-                    start = i + 1;
-                    break;
-                }else {
-                   if (tolower(str1[i]) != range[i]){       // make sure the request has range as the first string
-                        strcpy(str2 , "malformed request");
-                        return;
-                   } 
+// Function to parse the input string for range values
+void parse(int val, char *str1, char *str2) {
+    int space = 0; // Used to track spaces
+    int start = 0; // Last used location in str1 + 1
+    int lwrbund; // Lower bound
+    int uprbund; // Upper bound
+    char range[] = "range";
 
-                }
-            }  
-        }
-              while(space == 1){      // get the lower_bound
-            for (int i = start ; i < val ; i++){
-                 if (str1[i] == ' '){
-                    space++;
-                    start = i + 1;
-                    break;
-                }else if((str1[i] - '0') < 0 || (str1[i] -'0') > 9){
-                    strcpy(str2, "malformed request");
+    // Check for the keyword "range" in the input
+    while (space == 0) { 
+        for (int i = 0; i < val; i++) {
+            if (str1[i] == ' ') { // Found the first space
+                space++;
+                start = i + 1; // Update start to the next character
+                break;
+            } else {
+                if (tolower(str1[i]) != range[i]) { // Check for correct keyword
+                    strcpy(str2, "malformed request"); // Handle incorrect keyword
                     return;
-                }else {
-                    if ( i > start){
-                        lwrbund = (lwrbund * 10) + (str1[i] - '0');
-                    }else{
-                        lwrbund = str1[i] -'0';
-                    }
+                }
+            }
+        }  
+    }
+
+    // Get the lower bound
+    while (space == 1) { 
+        for (int i = start; i < val; i++) {
+            if (str1[i] == ' ') { // Found a space
+                space++;
+                start = i + 1; // Update start
+                break;
+            } else if ((str1[i] - '0') < 0 || (str1[i] - '0') > 9) {
+                strcpy(str2, "malformed request"); // Invalid character check
+                return;
+            } else {
+                if (i > start) {
+                    lwrbund = (lwrbund * 10) + (str1[i] - '0'); // Build lower bound
+                } else {
+                    lwrbund = str1[i] - '0'; // Initialize lower bound
                 }
             }
         }
-       
-            for (int i = start; i <= val; i++){
-              
-                 if (str1[i] == ' '){
-                    space++;
-                    break;                    
-                }else if((str1[i] - '0') < 0 || (str1[i] -'0') > 9){
-                    strcpy(str2, "malformed request");
-                    return;
-                }else{
-                    if ( i > start){
-                        uprbund = (uprbund * 10) + (str1[i] - '0');
-                    }else{
-                        uprbund = str1[i] - '0';
-                    }
-                }
-            }
-        if (lwrbund > uprbund){
-            strcpy(str2, "malformed requeset");
+    }
+
+    // Get the upper bound
+    for (int i = start; i <= val; i++) {
+        if (str1[i] == ' ') { // Found a space
+            space++;
+            break;                    
+        } else if ((str1[i] - '0') < 0 || (str1[i] - '0') > 9) {
+            strcpy(str2, "malformed request"); // Invalid character check
             return;
-    
-        } 
-        primes(lwrbund, uprbund, str2);
-    
+        } else {
+            if (i > start) {
+                uprbund = (uprbund * 10) + (str1[i] - '0'); // Build upper bound
+            } else {
+                uprbund = str1[i] - '0'; // Initialize upper bound
+            }
+        }
+    }
+
+    // Check if the lower bound is greater than the upper bound
+    if (lwrbund > uprbund) {
+        strcpy(str2, "malformed request"); // Handle incorrect range
+        return;
+    } 
+
+    // Call primes function to find primes in the specified range
+    primes(lwrbund, uprbund, str2);
 }
+
