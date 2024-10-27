@@ -6,18 +6,21 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <ctype.h>
 
 
 void primes(int start, int end, char *str2);
 bool calc_prime (int num);
 void parse(int val, char *str1, char *str2 );
 void print1(char *str2);
+
+
 int main()
 {
 	int fd1; 
-    char str1[80];
-    char str2[80]= {0};
-   	// FIFO file path
+    char str1[80];                      
+    char str2[80]= {0};                 // initalize all emlements to 0 to avoid garbage values
+   	                                    // FIFO file path
 	const char * myfifo = "/tmp/myfifo";
     
    if( (mkfifo (myfifo, 0666)) == -1){ // creates pipe under the location specified by myfifo
@@ -35,55 +38,7 @@ int main()
 
 
         int val = (int)bytesRead - 3;                   //converts bytesread into int +2 for some reason
-        int space = 0;// used for spaces
-        int start = 0;    // last used location in str1 + 1
-        int lwrbund;  // gets the lower bound
-        int uprbund;  // gets the upper bound
-         
-       
-        while (space == 0){     // convert char to int or str
-            for (int i = 0; i < val; i++){
-             
-                if(str1[i] == ' '){         // check for the first 
-                    space++;
-                    start = i + 1;
-                    break;
-                }
-            }  
-        }
-              while(space == 1){      // get the lower_bound
-            for (int i = start ; i < val ; i++){
-                 if (str1[i] == ' '){
-                    space++;
-                    start = i + 1;
-                    break;
-                }else {
-                    if ( i > start){
-                        lwrbund = (lwrbund * 10) + (str1[i] - '0');
-                    }else{
-                        lwrbund = str1[i] -'0';
-                    }
-                }
-            }
-        }
-       
-        //while (space == 3){
-            for (int i = start; i <= val; i++){
-              
-                 if (str1[i] == ' '){
-                    space++;
-                    break;                    
-                }else{
-                    if ( i > start){
-                        uprbund = (uprbund * 10) + (str1[i] - '0');
-                    }else{
-                        uprbund = str1[i] - '0';
-                    }
-                }
-            }
-        //}    
-        primes(lwrbund, uprbund, str2);
-    
+        parse ( val,str1,str2); 
 	
 		// Now open in write mode and write
 		// string taken from user.
@@ -92,7 +47,7 @@ int main()
     
 		write(fd1, str2, strlen(str2)+1);
 		close(fd1);
-        
+        memset(str2, 0, sizeof(str2));
 	}
 	return 0;
 }
@@ -124,4 +79,68 @@ bool calc_prime(int num){
     return true;
 }
 
+void parse (int val, char *str1, char *str2){
+        int space = 0;// used for spaces
+        int start = 0;    // last used location in str1 + 1
+        int lwrbund;  // gets the lower bound
+        int uprbund;  // gets the upper bound
+        char range[] = "range";
+  while (space == 0){     // convert char to int or str
+            for (int i = 0; i < val; i++){
+             
+                if(str1[i] == ' '){         // check for the first 
+                    space++;
+                    start = i + 1;
+                    break;
+                }else {
+                   if (tolower(str1[i]) != range[i]){       // make sure the request has range as the first string
+                        strcpy(str2 , "malformed request");
+                        return;
+                   } 
 
+                }
+            }  
+        }
+              while(space == 1){      // get the lower_bound
+            for (int i = start ; i < val ; i++){
+                 if (str1[i] == ' '){
+                    space++;
+                    start = i + 1;
+                    break;
+                }else if((str1[i] - '0') < 0 || (str1[i] -'0') > 9){
+                    strcpy(str2, "malformed request");
+                    return;
+                }else {
+                    if ( i > start){
+                        lwrbund = (lwrbund * 10) + (str1[i] - '0');
+                    }else{
+                        lwrbund = str1[i] -'0';
+                    }
+                }
+            }
+        }
+       
+            for (int i = start; i <= val; i++){
+              
+                 if (str1[i] == ' '){
+                    space++;
+                    break;                    
+                }else if((str1[i] - '0') < 0 || (str1[i] -'0') > 9){
+                    strcpy(str2, "malformed request");
+                    return;
+                }else{
+                    if ( i > start){
+                        uprbund = (uprbund * 10) + (str1[i] - '0');
+                    }else{
+                        uprbund = str1[i] - '0';
+                    }
+                }
+            }
+        if (lwrbund > uprbund){
+            strcpy(str2, "malformed requeset");
+            return;
+    
+        } 
+        primes(lwrbund, uprbund, str2);
+    
+}
