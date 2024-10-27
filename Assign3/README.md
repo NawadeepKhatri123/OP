@@ -1,4 +1,5 @@
 FIFO Prime Number
+
 Overview
     This project implements a two-sided FIFO (First In, First Out) communication system in C. 
     One side reads input to find prime numbers in a specified range, while the other side writes the request for the range. 
