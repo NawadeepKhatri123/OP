@@ -13,7 +13,6 @@
 void primes(int start, int end, char *str2); // Finds prime numbers in a range
 bool calc_prime(int num);                     // Checks if a number is prime
 void parse(int val, char *str1, char *str2); // Parses the input string for range
-void print1(char *str2);                      // Function not used in this code
 
 int main() {
     int fd1; 
