@@ -2,9 +2,10 @@ Conway's Game of Life in C++
 
 Description
 
-This program implements Conway's Game of Life using the NCurses library for a text-based graphical interface. 
-Users can interact with a grid where cells can be either alive (represented by "X") or dead (represented by "."). 
-The simulation updates the grid according to the rules of the Game of Life, allowing users to create initial configurations by clicking on the grid.
+    This program implements Conway's Game of Life using the NCurses library for a text-based graphical interface. 
+    Users can interact with a grid where cells can be either alive (represented by "X") or dead (represented by "."). 
+    The simulation updates the grid according to the rules of the Game of Life, allowing users to create initial configurations by clicking on the grid.
+
 Install NCurses (ubuntu/debian)
 
 sudo agpt-get install libncurses5-dev libncursesw5-dev
