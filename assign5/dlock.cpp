@@ -5,7 +5,7 @@
 #include <sstream>
 using namespace std;
 
-void saftey(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<vector<int>>& NEED, int n, int m, vector<vector<int>>& AVAILABLE){
+void Bankers(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<vector<int>>& NEED, int n, int m, vector<int>& AVAILABLE);
 
 int main(){
 	int i ;
@@ -14,7 +14,7 @@ int main(){
 	vector<vector<int>> MAX;
 	vector<vector<int>> ALLOCATION;
 	vector<vector<int>> NEED;
-	vector<int> AVAIALBLE;
+	vector<int> AVAILABLE = {3,3,2};
 
 	ifstream infile("file.txt"); // open the file
 	if (!infile){
@@ -78,49 +78,57 @@ int main(){
         	cout << endl;
     	}
 
-    	saftey(MAX, ALLOCATION, NEED, n , m, AVAILABLE);
+    	Bankers(MAX, ALLOCATION, NEED, n , m, AVAILABLE);
     	return 0;
 
 
 }
 
-void saftey(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<vector<int>>& NEED, int n, int m, vector<vector<int>>& AVAILABLE){
+void Bankers(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<vector<int>>& NEED, int n, int m, vector<int>& AVAILABLE){
 	
 	int p;
-
-	vector<vector<int>> request(1,vector<int>(3));
-	cout << " select a process (0 - 4): ";
-	cin >> p;
-	cout << " enter your request vector ( .. .. .. ) : ";
-	cin >> request[p][0] >> request[p][1] >> request[p][2];
-	
-	vector<int> finish(5,0);
-	vector<int> work(3,0);
-	for (int i = 0; i < AVAILABLE.size(); i++){
-		work[i] = AVAILABLE[i];
-	}
-	int s = 0;
-	int move = 0
+	vector<int> request(m);
+	vector<int> finish(p,0);
+	vector<int> work(AVAILABLE.size());
+	work = AVAILABLE;
+		
 	while(true){
-		for (int i = 0; i < n; i++){
-			if (finish[i] == 0){
-				for ( int j = 0; j < m; j++){
-					if (NEED[i][j] < work[j]){
-						work[j] = work[j] + ALLOCATION[i];
-						finish[i]++;
-						s++;
-					}else{
-						break;
-					}
-				}
-			}
-			if ( s >= n){
-				break;
+
+		cout << " select a process (0 - 4): ";
+		cin >> p;
+		cout << " enter your request vector ( .. .. .. ) : ";
+		cin >> request[0] >> request[1] >> request[2];
+		for (int i = 0; i < m; i++){
+			if (request[i] > NEED[p][i] || request[i] > AVAILABLE[i]){
+				cerr << " error : invalid request\n" << i;
 			}
 		}
-
+		for (int i = 0; i < m; i++){
+			AVAILABLE[i] = AVAILABLE[i] - request[i];	
+			ALLOCATION[p][i] = ALLOCATION[p][i] + request[i]; 
+			 
+		}
+		cout << "alloc Matrix:" << endl;
+    		for (const auto& row : ALLOCATION) {
+        		for (int num : row) {
+            			cout << num << " ";
+       			}
+        		cout << endl;
+    		}
+		// change the needs vector
+		for ( int i = 0; i < MAX.size(); i++){
+			for ( int j =0; j < MAX[i].size();j++){
+				NEED[i][j] = MAX[i][j] - ALLOCATION[i][j];
+			}
+    		} 
+		cout << "Need Matrix:" << endl;
+    		for (const auto& row : NEED) {
+        		for (int num : row) {
+            			cout << num << " ";
+       			}
+        		cout << endl;
+    		}
 	}
-	cout << " request accepted \n";
 
 }
 
