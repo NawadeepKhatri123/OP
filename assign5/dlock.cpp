@@ -5,13 +5,16 @@
 #include <sstream>
 using namespace std;
 
+void saftey(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<vector<int>>& NEED, int n, int m, vector<vector<int>>& AVAILABLE){
+
 int main(){
 	int i ;
 	int n;	//number of processes
 	int m;  //number of resource types
 	vector<vector<int>> MAX;
-	vector<vector<int>> AVAILABLE;
+	vector<vector<int>> ALLOCATION;
 	vector<vector<int>> NEED;
+	vector<int> AVAIALBLE;
 
 	ifstream infile("file.txt"); // open the file
 	if (!infile){
@@ -19,59 +22,105 @@ int main(){
 		return 1;
 	}
 
-string line;
-   while (getline(infile, line)) { // Read each line
-        istringstream iss(line);    // Stream to process the line
-        vector<int> maxRow;         // Row for MAX
-        vector<int> availableRow;   // Row for AVAILABLE
-        int num, count = 0;
+	string line;
+    	int lineNumber = 0;
 
-        // Read integers and divide into MAX and AVAILABLE
-        while (iss >> num) {
-            if (count < 3) {
-                maxRow.push_back(num); // First 3 numbers to MAX
-            } else if (count < 6) {
-                availableRow.push_back(num); // Next 3 numbers to AVAILABLE
-            }
-            count++;
-        }
+    	// Read each line from the file
+    	while (getline(infile, line)) {
+        	istringstream iss(line);  // Stream to process the line
+        	int num;
 
-        // Store rows in respective vectors
-        if (!maxRow.empty()) MAX.push_back(maxRow);
-        if (!availableRow.empty()) AVAILABLE.push_back(availableRow);
-    }
+        	if (lineNumber < 5) {
+            		// For the first 5 lines, store values in MAX
+            		vector<int> row;
+            		while (iss >> num) {
+                		row.push_back(num);
+            		}	
+            		MAX.push_back(row);  // Add row to MAX
+        	} else if (lineNumber == 5) {
+            		// The 6th line (after the first 5) goes to p
+            		iss >> n;
+        	} else if (lineNumber == 6) {
+            		// The 7th line goes to n
+           	 	iss >> m;
+        	}
 
-    infile.close(); // Close the file
+        	lineNumber++;  // Increment line number
+    		}
 
-    // Print MAX
-    cout << "MAX Matrix:" << endl;
-    for (const auto& row : MAX) {
-        for (int num : row) {
-            cout << num << " ";
-        }
-        cout << endl;
-    }
+        
+	infile.close(); // Close the file
 
-    // Print AVAILABLE
-    cout << "AVAILABLE Matrix:" << endl;
-    for (const auto& row : AVAILABLE) {
-        for (int num : row) {
-            cout << num << " ";
-        }
-        cout << endl;
-    }
-    NEED.resize(MAX.size(), vector<int>(MAX[0].size()));
-    for ( i = 0; i < MAX.size(); i++){
-	for ( int j =0; j < MAX[i].size();j++){
-		NEED[i][j] = MAX[i][j] - AVAILABLE[i][j];
+    	// Print MAX
+    	cout << "MAX Matrix:" << endl;
+    	for (const auto& row : MAX) {
+        	for (int num : row) {
+            	cout << num << " ";
+        	}
+        	cout << endl;
+    	}
+
+    	ALLOCATION.resize(MAX.size(), vector<int>(MAX[0].size(),0));
+   	NEED.resize(MAX.size(), vector<int>(MAX[0].size()));
+    	for ( i = 0; i < MAX.size(); i++){
+		for ( int j =0; j < MAX[i].size();j++){
+			NEED[i][j] = MAX[i][j] - ALLOCATION[i][j];
+
+		}
+
+    	} 
+
+    	cout << "Need Matrix:" << endl;
+    	for (const auto& row : NEED) {
+        	for (int num : row) {
+            	cout << num << " ";
+       		}
+        	cout << endl;
+    	}
+
+    	saftey(MAX, ALLOCATION, NEED, n , m, AVAILABLE);
+    	return 0;
+
+
+}
+
+void saftey(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<vector<int>>& NEED, int n, int m, vector<vector<int>>& AVAILABLE){
+	
+	int p;
+
+	vector<vector<int>> request(1,vector<int>(3));
+	cout << " select a process (0 - 4): ";
+	cin >> p;
+	cout << " enter your request vector ( .. .. .. ) : ";
+	cin >> request[p][0] >> request[p][1] >> request[p][2];
+	
+	vector<int> finish(5,0);
+	vector<int> work(3,0);
+	for (int i = 0; i < AVAILABLE.size(); i++){
+		work[i] = AVAILABLE[i];
+	}
+	int s = 0;
+	int move = 0
+	while(true){
+		for (int i = 0; i < n; i++){
+			if (finish[i] == 0){
+				for ( int j = 0; j < m; j++){
+					if (NEED[i][j] < work[j]){
+						work[j] = work[j] + ALLOCATION[i];
+						finish[i]++;
+						s++;
+					}else{
+						break;
+					}
+				}
+			}
+			if ( s >= n){
+				break;
+			}
+		}
 
 	}
-
-    } 
-
-
-    return 0;
-
+	cout << " request accepted \n";
 
 }
 
