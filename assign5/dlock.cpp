@@ -174,7 +174,7 @@ void print(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<vec
 	cout << "               A  B  C		       A B C		  A B C		A B C\n";
 
 	for (int i = 0; i < n; i++){
-		cout << "                "; 
+		cout << "P" << i << "              "; 
 		for (int j = 0; j < m; j++){
 			cout<< ALLOCATION[i][j] << " ";
 		}
