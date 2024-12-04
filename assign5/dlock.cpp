@@ -5,8 +5,9 @@
 #include <sstream>
 using namespace std;
 
+bool saftey(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<vector<int>>& NEED, int n, int m, vector<int>& AVAILABLE );
 void Bankers(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<vector<int>>& NEED, int n, int m, vector<int>& AVAILABLE);
-
+void print(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<vector<int>>& NEED, int n, int m, vector<int>& AVAILABLE );
 int main(){
 	int i ;
 	int n;	//number of processes
@@ -14,7 +15,7 @@ int main(){
 	vector<vector<int>> MAX;
 	vector<vector<int>> ALLOCATION;
 	vector<vector<int>> NEED;
-	vector<int> AVAILABLE = {3,3,2};
+	vector<int> AVAILABLE = {10,5,7};
 
 	ifstream infile("file.txt"); // open the file
 	if (!infile){
@@ -51,14 +52,7 @@ int main(){
         
 	infile.close(); // Close the file
 
-    	// Print MAX
-    	cout << "MAX Matrix:" << endl;
-    	for (const auto& row : MAX) {
-        	for (int num : row) {
-            	cout << num << " ";
-        	}
-        	cout << endl;
-    	}
+    	
 
     	ALLOCATION.resize(MAX.size(), vector<int>(MAX[0].size(),0));
    	NEED.resize(MAX.size(), vector<int>(MAX[0].size()));
@@ -87,11 +81,8 @@ int main(){
 void Bankers(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<vector<int>>& NEED, int n, int m, vector<int>& AVAILABLE){
 	
 	int p;
-	vector<int> request(m);
-	vector<int> finish(p,0);
-	vector<int> work(AVAILABLE.size());
-	work = AVAILABLE;
-		
+	vector<int> request(m);	
+	bool flag = true;
 	while(true){
 
 		cout << " select a process (0 - 4): ";
@@ -101,34 +92,107 @@ void Bankers(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<v
 		for (int i = 0; i < m; i++){
 			if (request[i] > NEED[p][i] || request[i] > AVAILABLE[i]){
 				cerr << " error : invalid request\n" << i;
+				flag = false;
 			}
 		}
+		if (flag){
 		for (int i = 0; i < m; i++){
 			AVAILABLE[i] = AVAILABLE[i] - request[i];	
-			ALLOCATION[p][i] = ALLOCATION[p][i] + request[i]; 
-			 
-		}
-		cout << "alloc Matrix:" << endl;
-    		for (const auto& row : ALLOCATION) {
-        		for (int num : row) {
-            			cout << num << " ";
-       			}
-        		cout << endl;
-    		}
+			ALLOCATION[p][i] = ALLOCATION[p][i] + request[i]; 		 
+		}}
+	
 		// change the needs vector
+		if (flag){
 		for ( int i = 0; i < MAX.size(); i++){
 			for ( int j =0; j < MAX[i].size();j++){
 				NEED[i][j] = MAX[i][j] - ALLOCATION[i][j];
 			}
-    		} 
-		cout << "Need Matrix:" << endl;
-    		for (const auto& row : NEED) {
-        		for (int num : row) {
-            			cout << num << " ";
-       			}
-        		cout << endl;
-    		}
+    		}}
+	
+		if (flag){
+			if (saftey(MAX, ALLOCATION, NEED, n,m,AVAILABLE)){
+				cout<<"\n request is safe\n";
+			}
+		}
 	}
 
 }
 
+bool saftey(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<vector<int>>& NEED, int n, int m, vector<int>& AVAILABLE ){
+
+	for (auto i :AVAILABLE){
+		cout<<i<<" ";
+	}
+	cout<<'\n';
+	vector<int> finish(n,0);
+	vector<int> work(AVAILABLE.size());
+	work = AVAILABLE;
+	bool safe = true;
+	int flag = 1;
+	do{
+	safe = false;
+	for (int i = 0; i < n; i++){
+		if ( finish[i] == 0){
+			bool canFinish = true;
+			for (int j = 0; j < m; j++){
+				if (NEED[i][j] > work[j]){
+					canFinish = false;
+					break;
+				}
+			}
+			if (canFinish){
+				for (int j = 0;j < m; j++){
+					work[j] = work[j] + ALLOCATION[i][j];
+				}
+				finish[i] = 1;
+				safe = true;
+			}
+		}
+	} 
+	} while(safe);
+
+	for (int i = 0; i < n; i++){
+		if (finish[i] != 1){
+			return false;
+		}
+	}
+	for (auto i :AVAILABLE){
+		cout<<i<<" 1";
+	}
+	cout<<'\n';
+
+	return true;
+}
+
+void print(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<vector<int>>& NEED, int n, int m, vector<int>& AVAILABLE ){
+
+	// Print MAX
+    	cout << "MAX Matrix:" << endl;
+    	for (const auto& row : MAX) {
+        	for (int num : row) {
+            	cout << num << " ";
+        	}
+        	cout << endl;
+    	}
+
+	cout << "alloc Matrix:" << endl;	
+	for (const auto& row : ALLOCATION) {
+        	for (int num : row) {
+            		cout << num << " ";
+       		}
+        	cout << endl;
+    	}
+
+	cout << "Need Matrix:" << endl;
+    	for (const auto& row : NEED) {
+        	for (int num : row) {
+            		cout << num << " ";
+       		}
+        	cout << endl;
+    	}
+
+	
+
+
+
+}
