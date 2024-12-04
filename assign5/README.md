@@ -37,10 +37,10 @@ EXAMPLE RUN
 	Select a process (0 - 4) : -1
 
 
-	              Allocation		Max		AVAILABLE	NEED
-               A  B  C		       	       A B C		  A B C		A B C
-                0 1 0                 	       7 5 3              10 4 7        7 4 3
-                0 0 0                          3 2 2                            3 2 2
-                0 0 0                          9 0 2                           	9 0 2
-                0 0 0                          2 2 2                           	2 2 2
-                0 0 0                          4 3 3                           	4 3 3
+	              Allocation		Max		AVAILABLE	        NEED
+               A  B  C		        A B C		  A B C		    A B C
+                0 1 0               7 5 3        10 4 7         7 4 3
+                0 0 0               3 2 2                       3 2 2
+                0 0 0               9 0 2                      	9 0 2
+                0 0 0               2 2 2                   	2 2 2
+                0 0 0               4 3 3                   	4 3 3
