@@ -87,7 +87,8 @@ void Bankers(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<v
 		cout << "Select a process (0 - 4): ";
 		cin >> p;
 		if ( p == -1){
-			print(MAX, ALLOCATION, NEED, n,m,AVAILABLE);	
+			print(MAX, ALLOCATION, NEED, n,m,AVAILABLE);
+			exit(0);
 		}
 		cout << "Enter your request vector ( .. .. .. ) : ";
 		cin >> request[0] >> request[1] >> request[2];
@@ -114,8 +115,10 @@ void Bankers(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<v
 		if (flag){
 			if (saftey(MAX, ALLOCATION, NEED, n,m,AVAILABLE)){
 				cout<<"Request is safe!\n\n";
+				print(MAX, ALLOCATION, NEED, n,m, AVAILABLE);
 			}else{
 				cout<<"Request is unsafe!!\n\n";
+				print(MAX, ALLOCATION, NEED, n,m, AVAILABLE);	
 			}
 		}
 	}
@@ -166,6 +169,7 @@ void print(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<vec
 
 
 	int count = 0;
+	cout << "\n";
 	cout << "              Allocation		Max		AVAILABLE	NEED\n";
 	cout << "               A  B  C		       A B C		  A B C		A B C\n";
 
@@ -195,7 +199,7 @@ void print(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<vec
 		}
 		cout << "\n";
 	}
-	exit(0);
+	cout <<"\n";
 
 
 }
