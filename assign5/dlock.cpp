@@ -84,16 +84,16 @@ void Bankers(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<v
 	bool flag = true;
 	while(true){
 
-		cout << "select a process (0 - 4): ";
+		cout << "Select a process (0 - 4): ";
 		cin >> p;
 		if ( p == -1){
 			print(MAX, ALLOCATION, NEED, n,m,AVAILABLE);	
 		}
-		cout << "enter your request vector ( .. .. .. ) : ";
+		cout << "Enter your request vector ( .. .. .. ) : ";
 		cin >> request[0] >> request[1] >> request[2];
 		for (int i = 0; i < m; i++){
 			if (request[i] > NEED[p][i] || request[i] > AVAILABLE[i]){
-				cerr << " error : invalid request\n" << i;
+				cerr << " error : invalid request\n";
 				flag = false;
 			}
 		}
@@ -113,7 +113,9 @@ void Bankers(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<v
 	
 		if (flag){
 			if (saftey(MAX, ALLOCATION, NEED, n,m,AVAILABLE)){
-				cout<<"request is safe!\n\n";
+				cout<<"Request is safe!\n\n";
+			}else{
+				cout<<"Request is unsafe!!\n\n";
 			}
 		}
 	}
