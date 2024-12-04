@@ -8,6 +8,7 @@ using namespace std;
 bool saftey(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<vector<int>>& NEED, int n, int m, vector<int>& AVAILABLE );
 void Bankers(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<vector<int>>& NEED, int n, int m, vector<int>& AVAILABLE);
 void print(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<vector<int>>& NEED, int n, int m, vector<int>& AVAILABLE );
+
 int main(){
 	int i ;
 	int n;	//number of processes
@@ -15,7 +16,7 @@ int main(){
 	vector<vector<int>> MAX;
 	vector<vector<int>> ALLOCATION;
 	vector<vector<int>> NEED;
-	vector<int> AVAILABLE = {10,5,7};
+	vector<int> AVAILABLE;
 
 	ifstream infile("file.txt"); // open the file
 	if (!infile){
@@ -44,7 +45,12 @@ int main(){
         	} else if (lineNumber == 6) {
             		// The 7th line goes to n
            	 	iss >> m;
-        	}
+        	}else if (lineNumber == 7){
+			while (iss >> num){
+				AVAILABLE.push_back(num);
+			}
+			
+		}
 
         	lineNumber++;  // Increment line number
     		}
@@ -64,13 +70,6 @@ int main(){
 
     	} 
 
-    	cout << "Need Matrix:" << endl;
-    	for (const auto& row : NEED) {
-        	for (int num : row) {
-            	cout << num << " ";
-       		}
-        	cout << endl;
-    	}
 
     	Bankers(MAX, ALLOCATION, NEED, n , m, AVAILABLE);
     	return 0;
@@ -81,13 +80,16 @@ int main(){
 void Bankers(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<vector<int>>& NEED, int n, int m, vector<int>& AVAILABLE){
 	
 	int p;
-	vector<int> request(m);	
+	vector<int> request(m,0);	
 	bool flag = true;
 	while(true){
 
-		cout << " select a process (0 - 4): ";
+		cout << "select a process (0 - 4): ";
 		cin >> p;
-		cout << " enter your request vector ( .. .. .. ) : ";
+		if ( p == -1){
+			print(MAX, ALLOCATION, NEED, n,m,AVAILABLE);	
+		}
+		cout << "enter your request vector ( .. .. .. ) : ";
 		cin >> request[0] >> request[1] >> request[2];
 		for (int i = 0; i < m; i++){
 			if (request[i] > NEED[p][i] || request[i] > AVAILABLE[i]){
@@ -111,7 +113,7 @@ void Bankers(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<v
 	
 		if (flag){
 			if (saftey(MAX, ALLOCATION, NEED, n,m,AVAILABLE)){
-				cout<<"\n request is safe\n";
+				cout<<"request is safe!\n\n";
 			}
 		}
 	}
@@ -120,9 +122,6 @@ void Bankers(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<v
 
 bool saftey(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<vector<int>>& NEED, int n, int m, vector<int>& AVAILABLE ){
 
-	for (auto i :AVAILABLE){
-		cout<<i<<" ";
-	}
 	cout<<'\n';
 	vector<int> finish(n,0);
 	vector<int> work(AVAILABLE.size());
@@ -156,43 +155,45 @@ bool saftey(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<ve
 			return false;
 		}
 	}
-	for (auto i :AVAILABLE){
-		cout<<i<<" 1";
-	}
-	cout<<'\n';
 
 	return true;
 }
 
 void print(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<vector<int>>& NEED, int n, int m, vector<int>& AVAILABLE ){
 
-	// Print MAX
-    	cout << "MAX Matrix:" << endl;
-    	for (const auto& row : MAX) {
-        	for (int num : row) {
-            	cout << num << " ";
-        	}
-        	cout << endl;
-    	}
 
-	cout << "alloc Matrix:" << endl;	
-	for (const auto& row : ALLOCATION) {
-        	for (int num : row) {
-            		cout << num << " ";
-       		}
-        	cout << endl;
-    	}
 
-	cout << "Need Matrix:" << endl;
-    	for (const auto& row : NEED) {
-        	for (int num : row) {
-            		cout << num << " ";
-       		}
-        	cout << endl;
-    	}
+	int count = 0;
+	cout << "              Allocation		Max		AVAILABLE	NEED\n";
+	cout << "               A  B  C		       A B C		  A B C		A B C\n";
 
+	for (int i = 0; i < n; i++){
+		cout << "                "; 
+		for (int j = 0; j < m; j++){
+			cout<< ALLOCATION[i][j] << " ";
+		}
+		cout << "                 ";		
+		for (int j = 0; j < m; j++){
+			cout << MAX[i][j] << " ";
+		}
+		cout << "             ";		
 	
+		if (count == 0){
+			for (int j = 0; j < m; j++){
+				cout << AVAILABLE[j] << " ";
+				count++;
+			}
+		}else{
 
+			cout<< "      ";
+		}
+		cout << "        ";
+		for (int j = 0; j < m; j++){
+			cout << NEED[i][j] << " ";
+		}
+		cout << "\n";
+	}
+	exit(0);
 
 
 }
