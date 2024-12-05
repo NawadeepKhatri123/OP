@@ -81,8 +81,8 @@ void Bankers(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<v
 	
 	int p;
 	vector<int> request(m,0);	
-	bool flag = true;
 	while(true){
+		bool flag = true;
 
 		cout << "Select a process (0 - 4): ";
 		cin >> p;
@@ -92,11 +92,26 @@ void Bankers(vector<vector<int>>& MAX, vector<vector<int>>& ALLOCATION, vector<v
 		}
 		cout << "Enter your request vector ( .. .. .. ) : ";
 		cin >> request[0] >> request[1] >> request[2];
+		int count1 = 0;
+		int count2 = 0;
 		for (int i = 0; i < m; i++){
-			if (request[i] > NEED[p][i] || request[i] > AVAILABLE[i]){
-				cerr << " error : invalid request\n";
+			if (request[i] > NEED[p][i]){
+				count1++;
+				flag = false;
+			}else if(request[i] > AVAILABLE[i]){
+				count2++;
 				flag = false;
 			}
+		}
+		if (count1 > 0){
+			cerr << " error : invalid request : Request is greater than NEED\n ";
+			print(MAX, ALLOCATION, NEED, n,m, AVAILABLE);	
+
+		}if(count2 > 0) {
+			cerr << " error : invalid request : Request is greater than Available\n ";
+			print(MAX, ALLOCATION, NEED, n,m, AVAILABLE);	
+
+	
 		}
 		if (flag){
 		for (int i = 0; i < m; i++){
